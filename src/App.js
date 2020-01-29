@@ -2,16 +2,13 @@ import React, { useState } from "react";
 import "./styles.css";
 
 const GRAPHQL_URL =
-  "https://graphql-sdm-poc.netlify.com/.netlify/functions/graphql";
+  "https://graphql-lambda-setup.netlify.com/.netlify/functions/graphql";
 
-const productID = "814391015914";
 const query = `
-  query product {
-    product(id: ${productID}) {
-      id
-      name
-      description
-      image
+  query {
+    name
+    skills {
+      frontEnd
     }
   }
 `;
@@ -29,10 +26,8 @@ export default function App() {
     setLoading(true);
     try {
       const rawResult = await fetch(GRAPHQL_URL, opts);
-
       const results = await rawResult.json();
       setResult(results);
-      console.log(result);
     } catch (error) {
       console.log(error);
     }
@@ -41,14 +36,20 @@ export default function App() {
 
   return (
     <div className="App">
-      <h1>Hello CodeSandbox</h1>
-      <h2>Start editing to see some magic happen!</h2>
-      <button onClick={() => getData()}> Click me!</button>
+      <h1>Click to find out what raman may know</h1>
+      <button className="decent-button" onClick={() => getData()}>
+        Get Raman's Info
+      </button>
       {loading && <div>...loading</div>}
       {result && !loading && (
         <>
-          <h2>{result.data.product.name}</h2>
-          <p>{result.data.product.description}</p>
+          <h2>{result.data.name}</h2>
+          <h3>Some skills</h3>
+          <ul className="skills-list">
+            {result.data.skills.frontEnd.map((skill, i) => (
+              <li key={i}>{skill}</li>
+            ))}
+          </ul>
         </>
       )}
     </div>
